@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="./">
+    <title>ANHS Protocol - Advanced Nurturing Intranet</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/AyaNoClue/ANHS-Protocol/main/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --panel-dark: #121217;
+            --accent-crimson: #9f1239;
+            --accent-crimson-hover: #be123c;
+            --border-muted: #27272a;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #d4d4d8;
+        }
+
+        .font-data { font-family: 'JetBrains Mono', monospace; }
+        .card-anhs {
+            background-color: var(--panel-dark);
+            border: 1px solid var(--border-muted);
+            border-top: 2px solid var(--border-muted);
+            transition: border-color 0.2s ease;
+        }
+        .card-anhs:hover { border-top-color: var(--accent-crimson); }
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-crimson); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-rose-950 selection:text-rose-200">
+
+    <audio id="arisu-audio" src="https://raw.githubusercontent.com/AyaNoClue/ANHS-Protocol/main/arisu_solitude.wav" loop></audio>
+
+    <header class="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded flex items-center justify-center overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/AyaNoClue/ANHS-Protocol/main/logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/40x40/121217/e11d48?text=ANHS';" />
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-data text-xs font-bold tracking-wider text-zinc-100">ANHS PROTOCOL</span>
+                            <span id="sync-indicator" class="px-1.5 py-0.5 text-[8px] font-data bg-zinc-900 text-zinc-500 border border-zinc-800 rounded uppercase font-bold">OFFLINE</span>
+                        </div>
+                        <p class="text-[9px] text-zinc-500 font-data tracking-wider">CHESS EVALUATION NETWORK // PORTAL ID: 492-L</p>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center space-x-8 text-xs font-data">
+                    <nav class="flex items-center space-x-6">
+                        <button onclick="switchPage('dashboard')" class="text-zinc-500 hover:text-rose-500 font-bold tracking-wider uppercase transition-colors">DASHBOARD</button>
+                        <button onclick="switchPage('archives')" class="text-zinc-500 hover:text-rose-500 font-bold tracking-wider uppercase transition-colors">ARCHIVES</button>
+                    </nav>
+                    <div class="flex items-center space-x-2 border-r border-zinc-800 pr-6">
+                        <span class="text-zinc-500">INTEGRITY:</span>
+                        <span class="text-rose-500 flex items-center gap-1.5 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> <span id="integrity-text">SANDBOX ENCRYPTED</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2 border-r border-zinc-800 pr-6">
+                        <span class="text-zinc-500">CLASS STANDING:</span>
+                        <span id="header-class-points" class="text-rose-500 font-bold">390 CP</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-zinc-500">ACTIVE RATING:</span>
+                        <span id="user-elo-display" class="text-rose-500 font-bold">1450 ELO</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="bg-zinc-900 border border-zinc-800 rounded px-3 py-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-receipt text-rose-500 text-xs"></i>
+                        <div>
+                            <div class="text-[8px] text-zinc-500 font-data uppercase leading-none">Private Points</div>
+                            <div id="private-points-val" class="text-xs font-data font-bold text-rose-500 leading-none mt-1">15,000 PP</div>
+                        </div>
+                    </div>
+                    <button onclick="resetData()" class="text-zinc-500 hover:text-rose-500 border border-zinc-800 p-2 rounded transition-all bg-zinc-900">
+                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        <div id="page-dashboard">
+            <div class="relative rounded p-5 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 overflow-hidden border border-zinc-800 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(9, 9, 11, 0.95), rgba(18, 18, 23, 0.85)), url('https://raw.githubusercontent.com/AyaNoClue/ANHS-Protocol/main/banner.jpg');">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-rose-600"></div>
+                <div class="flex items-center space-x-4 relative z-10">
+                    <div class="p-3 bg-zinc-950 text-rose-500 border border-zinc-800 rounded"><i class="fa-solid fa-shield-halved text-lg"></i></div>
+                    <div>
+                        <span class="text-[8px] text-rose-500 font-data tracking-widest uppercase block font-bold">Classroom of the Elite Directive</span>
+                        <h3 class="text-sm font-semibold text-zinc-100 tracking-wide uppercase">OAA Database & Chess Evaluation Interface</h3>
+                    </div>
+                </div>
+                <button id="daily-btn" onclick="claimDailyPoints()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-data font-semibold rounded text-xs transition-all">ACQUIRE DIEM ALLOWANCE</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-8 space-y-8">
+                    <!-- Placeholder logic -->
+                </div>
+            </div>
+        </div>
+
+        <div id="page-archives" class="hidden space-y-8">
+            <div class="card-anhs rounded p-6">
+                <h2 class="text-xs font-bold tracking-widest text-rose-500 uppercase border-b border-zinc-800 pb-4">ARCHIVES</h2>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.state = {
+            privatePoints: 15000,
+            userElo: 1450,
+            studentName: "Manabu Horikita",
+            currentClass: "B",
+            classDPoints: 390,
+            hasClaimedDaily: false,
+            boughtItems: { master: false, transfer: false, secret: false },
+            ayanokojiUnmasked: false,
+            chessComConnected: false,
+            chessComUsername: "",
+            bulletins: [{ id: 1, sender: "Student Council", text: "Mandatory inspection Friday.", time: "09:00" }],
+            activeOaaContact: "sakayanagi",
+            oaaChats: {
+                sakayanagi: [{ sender: "Arisu Sakayanagi", text: "Welcome.", isBot: true }],
+                ryuen: [{ sender: "Kakeru Ryūen", text: "Oi.", isBot: true }],
+                ichinose: [{ sender: "Honami Ichinose", text: "Hello!", isBot: true }],
+                horikita: [{ sender: "Suzune Horikita", text: "Focus.", isBot: true }],
+                ayanokoji: [{ sender: "Kiyotaka Ayanokōji", text: "...", isBot: true }]
+            }
+        };
+
+        function switchPage(page) {
+            document.getElementById('page-dashboard').classList.toggle('hidden', page !== 'dashboard');
+            document.getElementById('page-archives').classList.toggle('hidden', page !== 'archives');
+        }
+
+        function resetData() {
+            localStorage.removeItem('anhs_protocol_state_clean_v3');
+            location.reload();
+        }
+
+        function claimDailyPoints() {
+            if (window.state.hasClaimedDaily) return;
+            window.state.privatePoints += 5000;
+            window.state.hasClaimedDaily = true;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('private-points-val').innerText = window.state.privatePoints.toLocaleString() + " PP";
+            document.getElementById('user-elo-display').innerText = window.state.userElo + " ELO";
+        }
+
+        window.onload = () => {
+            updateUI();
+        };
+    </script>
+</body>
+</html>
